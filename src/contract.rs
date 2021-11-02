@@ -1,10 +1,10 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Addr, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{to_binary, Addr, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::msg::{CountResponse, OwnerResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
+use crate::msg::{CountResponse, ExecuteMsg, InstantiateMsg, OwnerResponse, QueryMsg};
 use crate::state::{State, STATE};
 
 // version info for migration info
@@ -63,7 +63,11 @@ pub fn try_reset(deps: DepsMut, info: MessageInfo, count: i32) -> Result<Respons
     })?;
     Ok(Response::new().add_attribute("method", "reset"))
 }
-pub fn try_update_owner(deps: DepsMut, info: MessageInfo, new_owner: Addr) -> Result<Response, ContractError> {
+pub fn try_update_owner(
+    deps: DepsMut,
+    info: MessageInfo,
+    new_owner: Addr,
+) -> Result<Response, ContractError> {
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
         if info.sender != state.owner {
             return Err(ContractError::Unauthorized {});
@@ -166,7 +170,7 @@ mod tests {
     fn set_new_owner() {
         let mut deps = mock_dependencies(&coins(2, "token"));
 
-        let msg = InstantiateMsg {count: 1 };
+        let msg = InstantiateMsg { count: 1 };
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
@@ -177,7 +181,9 @@ mod tests {
 
         // beneficiary can release it
         let unauth_info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::UpdateOwner {new_owner: Addr::unchecked("someone_else")};
+        let msg = ExecuteMsg::UpdateOwner {
+            new_owner: Addr::unchecked("someone_else"),
+        };
         let res = execute(deps.as_mut(), mock_env(), unauth_info, msg);
         match res {
             Err(ContractError::Unauthorized {}) => {}
@@ -186,7 +192,9 @@ mod tests {
 
         // only the original creator can update the owner
         let auth_info = mock_info("creator", &coins(2, "token"));
-        let msg = ExecuteMsg::UpdateOwner {new_owner: Addr::unchecked("someone_else")};
+        let msg = ExecuteMsg::UpdateOwner {
+            new_owner: Addr::unchecked("someone_else"),
+        };
         let _res = execute(deps.as_mut(), mock_env(), auth_info, msg).unwrap();
 
         // The new owner is "someone_else"
