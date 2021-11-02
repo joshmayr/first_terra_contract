@@ -243,6 +243,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "first_terra_contract"
+version = "0.1.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-storage-plus",
+ "cw2",
+ "schemars",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -348,20 +362,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c7ed8b8c7b886ea3ed7dde405212185f423ab44682667c8c6dd14aa1d9f6612"
 dependencies = [
  "unicode-xid",
-]
-
-[[package]]
-name = "project-name"
-version = "0.1.0"
-dependencies = [
-  "cosmwasm-schema",
-  "cosmwasm-std",
-  "cosmwasm-storage",
-  "cw-storage-plus",
-  "cw2",
-  "schemars",
-  "serde",
-  "thiserror",
 ]
 
 [[package]]
